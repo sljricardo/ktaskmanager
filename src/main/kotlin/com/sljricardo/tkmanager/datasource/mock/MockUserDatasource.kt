@@ -23,4 +23,6 @@ class MockUserDatasource: UserDatasource {
 
     override fun retrieveUser(userId: String): User? = users.firstOrNull { userId == it.id }
 
+    override fun retrieveUsers(): Collection<User> = users
+
 }

@@ -8,4 +8,5 @@ import org.springframework.stereotype.Service
 class UserService(val userDatasource: UserDatasource) {
     fun addUser(user: User): User = userDatasource.newUser(user)
     fun getUser(userId: String): User? = userDatasource.retrieveUser(userId)
+    fun getUsers(): Collection<User> = userDatasource.retrieveUsers()
 }

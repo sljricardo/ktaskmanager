@@ -15,6 +15,9 @@ class UserController(val userService: UserService) {
     @GetMapping("/{userId}")
     fun getUser(@PathVariable userId: String): User? = userService.getUser(userId)
 
+    @GetMapping("/all")
+    fun getUsers(): Collection<User> = userService.getUsers()
+
     @PostMapping()
     fun addUser(@RequestBody user: User): User = userService.addUser(user)
 }
