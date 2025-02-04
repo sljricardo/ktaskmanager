@@ -4,15 +4,15 @@ import com.sljricardo.tkmanager.datasource.UserDatasource
 import com.sljricardo.tkmanager.model.User
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Repository
-import kotlin.math.sqrt
+import java.util.*
 
 @Repository
 @Profile("local")
 class MockUserDatasource: UserDatasource {
     private val users = mutableListOf(
         User(
-            id = "1",
-            name = "first"
+            id = UUID.randomUUID().toString(),
+            name = "Name of the user"
         )
     )
 

@@ -1,7 +1,8 @@
 package com.sljricardo.tkmanager.controller
 
+import com.sljricardo.tkmanager.dto.AssignTaskRequest
 import com.sljricardo.tkmanager.model.Task
-import com.sljricardo.tkmanager.model.TaskRequestBody
+import com.sljricardo.tkmanager.dto.NewTaskRequest
 import com.sljricardo.tkmanager.service.TaskService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -21,5 +22,10 @@ class TaskController(private val taskService: TaskService) {
     fun getTasks(@RequestParam query: String?): Collection<Task> = taskService.getTasks(query)
 
     @PostMapping
-    fun addTask(@RequestBody task: TaskRequestBody) = taskService.addTask(task)
+    fun addTask(@RequestBody task: NewTaskRequest) = taskService.addTask(task)
+
+    @PostMapping("/assign")
+    fun assignTask(@RequestBody assignTaskRequest: AssignTaskRequest) {
+        taskService.assignTask(assignTaskRequest.taskId, assignTaskRequest.userId)
+    }
 }
