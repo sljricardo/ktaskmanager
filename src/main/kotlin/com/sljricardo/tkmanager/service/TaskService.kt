@@ -7,7 +7,8 @@ import org.springframework.stereotype.Service
 import java.util.UUID
 
 @Service
-class TaskService(val taskDatasource: TaskDatasource, val userService: UserService) {
+class TaskService(
+    val taskDatasource: TaskDatasource, val userService: UserService) {
     fun addTask(task: NewTaskRequest): Task {
         val newTask: Task = Task(
             id = UUID.randomUUID().toString(),
