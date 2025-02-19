@@ -6,6 +6,7 @@ plugins {
 	id("org.springframework.boot") version "3.4.2"
 	id("io.spring.dependency-management") version "1.1.7"
 	id("nu.studer.jooq") version "9.0"
+	id("jacoco")
 }
 
 group = "com.sljricardo"
@@ -51,6 +52,32 @@ kotlin {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+tasks.jacocoTestReport {
+	dependsOn(tasks.test) // Run tests before generating the report
+	reports {
+		xml.required.set(true)
+		html.required.set(true)
+		csv.required.set(false)
+	}
+}
+
+tasks.jacocoTestCoverageVerification {
+	violationRules {
+		rule {
+			element = "CLASS"
+			limit {
+				counter = "LINE"
+				value = "COVEREDRATIO"
+				minimum = "0.80".toBigDecimal() // Require at least 80% coverage
+			}
+		}
+	}
+}
+
+jacoco {
+	toolVersion = "0.8.12"
 }
 
 jooq {
