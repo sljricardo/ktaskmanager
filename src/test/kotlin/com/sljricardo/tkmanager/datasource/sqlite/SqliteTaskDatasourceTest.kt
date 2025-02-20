@@ -13,10 +13,10 @@ class SqliteTaskDatasourceTest {
     private lateinit var dsl: DSLContext
     private lateinit var datasource: SqliteTaskDatasource
 
-    fun createMockTaskWithId(id: String = "task-id-test"): Task {
+    private fun createMockTaskWithId(id: String = "task-id-test", name: String = "task-name"): Task {
         return Task(
             id = id,
-            name = "task-name",
+            name = name,
             description = "task-description",
             assignee = null
         )
@@ -48,6 +48,11 @@ class SqliteTaskDatasourceTest {
                 ID TEXT PRIMARY KEY,
                 NAME TEXT NOT NULL
             );
+        """.trimIndent())
+        // Create a USER
+        dsl.execute("""
+            INSERT INTO USERS (ID, NAME)
+            VALUES ('test-id-mock', 'test user name')
         """.trimIndent())
     }
 
@@ -90,4 +95,81 @@ class SqliteTaskDatasourceTest {
         assertNull(task)
     }
 
+    @Test
+    fun `return a collection of tasks`() {
+        datasource.newTask(
+            createMockTaskWithId("task-id-test")
+        )
+
+        val tasks = datasource.retrieveTasks()
+
+        assertTrue(tasks.isNotEmpty())
+        assertEquals(tasks.first().id, "task-id-test")
+    }
+
+    @Test
+    fun `should return partial search tasks`() {
+        datasource.newTask(
+            createMockTaskWithId(
+                id = "test-id",
+                name = "task-name-search"
+            )
+        )
+
+        val tasks = datasource.searchTask("search")
+
+        assertTrue(tasks.size == 1)
+    }
+
+    @Test
+    fun `should return an empty collection if search do not find tasks`() {
+        datasource.newTask(
+            createMockTaskWithId(
+                id = "test-id",
+                name = "task-name-search"
+            )
+        )
+        datasource.newTask(
+            createMockTaskWithId(
+                id = "test-id-2",
+                name = "task-name-search-2"
+            )
+        )
+
+        val tasks = datasource.searchTask("nothing")
+
+        assertTrue(tasks.isEmpty())
+    }
+
+    @Test
+    fun `should remove a task`() {
+        datasource.newTask(
+            createMockTaskWithId("task-id-1")
+        )
+        datasource.newTask(
+            createMockTaskWithId("task-id-2")
+        )
+
+        datasource.removeTask("task-id-2")
+
+        val tasks = datasource.retrieveTasks()
+
+        assertTrue(tasks.size == 1)
+    }
+
+    @Test
+    fun `should assign task to a user`() {
+        datasource.newTask(
+            createMockTaskWithId("task-id-1")
+        )
+        datasource.assignTask("task-id-1", User(
+            id = "test-id-mock",
+            name = "test user name"
+        ))
+
+        val task = datasource.retrieveTask("task-id-1")
+
+        assertNotNull(task?.assignee)
+        assertEquals(task?.assignee?.name, "test user name")
+    }
 }

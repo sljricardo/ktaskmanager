@@ -65,6 +65,7 @@ class SqliteTaskDatasource(private val dsl: DSLContext): TaskDatasource {
     override fun removeTask(taskId: String) {
         dsl.deleteFrom(TASK)
             .where(TASK.ID.eq(taskId))
+            .execute()
     }
 
     override fun assignTask(taskId: String, assignee: User) {
@@ -72,8 +73,6 @@ class SqliteTaskDatasource(private val dsl: DSLContext): TaskDatasource {
             .set(TASK.ASSIGNEE_ID, assignee.id)
             .where(TASK.ID.eq(taskId))
             .execute()
-
-        println(rowsUpdated)
 
         if (rowsUpdated == 0) {
             throw IllegalArgumentException("Task with ID $taskId not found.")
