@@ -55,6 +55,7 @@ kotlin {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+	jvmArgs("-XX:+EnableDynamicAgentLoading") // Suppress dynamic agent loading warning
 }
 
 tasks.jacocoTestReport {
