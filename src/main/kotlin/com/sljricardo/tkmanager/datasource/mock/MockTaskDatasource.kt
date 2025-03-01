@@ -2,6 +2,7 @@ package com.sljricardo.tkmanager.datasource.mock
 
 import com.sljricardo.tkmanager.datasource.TaskDatasource
 import com.sljricardo.tkmanager.model.Task
+import com.sljricardo.tkmanager.model.TaskState
 import com.sljricardo.tkmanager.model.User
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Repository
@@ -35,6 +36,14 @@ class MockTaskDatasource: TaskDatasource {
 
         if (task != null) {
             task.assignee = assignee
+        }
+    }
+
+    override fun changeTaskState(taskId: String, taskState: TaskState) {
+        val task = tasks.firstOrNull { taskId == it.id }
+
+        if (task != null) {
+            task.state = taskState
         }
     }
 }

@@ -3,6 +3,7 @@ package com.sljricardo.tkmanager.service
 import com.sljricardo.tkmanager.datasource.TaskDatasource
 import com.sljricardo.tkmanager.model.Task
 import com.sljricardo.tkmanager.dto.NewTaskRequest
+import com.sljricardo.tkmanager.model.TaskState
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -14,6 +15,7 @@ class TaskService(
             id = UUID.randomUUID().toString(),
             name = task.name,
             description = task.description ?: "",
+            state = TaskState.TODO,
             assignee = null
         )
         taskDatasource.newTask(newTask)
@@ -36,5 +38,14 @@ class TaskService(
         val user = userService.getUser(userId) ?: throw IllegalArgumentException("User with ID $userId does not exist.")
 
         taskDatasource.assignTask(task.id, user)
+    }
+
+    fun changeTaskSate(taskId: String, taskState: TaskState) {
+        this.getTask(taskId) ?: throw IllegalArgumentException("No task found")
+
+        runCatching { TaskState.valueOf(taskState.name.uppercase()) }
+            .getOrElse { throw IllegalArgumentException("Invalid task state: ${taskState.name} options ${TaskState.entries.toTypedArray()}") }
+
+        taskDatasource.changeTaskState(taskId, taskState)
     }
 }

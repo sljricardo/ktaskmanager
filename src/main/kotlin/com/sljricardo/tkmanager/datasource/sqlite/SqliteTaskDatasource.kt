@@ -5,6 +5,7 @@ import com.sljricardo.jooq.tables.references.TASK
 import com.sljricardo.jooq.tables.references.USERS
 import com.sljricardo.tkmanager.datasource.TaskDatasource
 import com.sljricardo.tkmanager.model.Task
+import com.sljricardo.tkmanager.model.TaskState
 import com.sljricardo.tkmanager.model.User
 import org.jooq.DSLContext
 import org.springframework.context.annotation.Profile
@@ -18,6 +19,7 @@ class SqliteTaskDatasource(private val dsl: DSLContext): TaskDatasource {
             id = record.getValue(TASK.ID)!!,
             name = record.getValue(TASK.NAME)!!,
             description = record.getValue(TASK.DESCRIPTION),
+            state = TaskState.valueOf(record.getValue(TASK.STATE)!!),
             assignee = record.getValue(TASK.ASSIGNEE_ID)?.let {
                 record[USERS.ID]?.let { userId ->
                     User(
@@ -42,7 +44,7 @@ class SqliteTaskDatasource(private val dsl: DSLContext): TaskDatasource {
 
     override fun retrieveTask(taskId: String): Task? {
         return dsl.select(
-            TASK.ID, TASK.NAME, TASK.DESCRIPTION, TASK.ASSIGNEE_ID, // Task table
+            TASK.ID, TASK.NAME, TASK.DESCRIPTION, TASK.ASSIGNEE_ID, TASK.STATE, // Task table
             USERS.ID, USERS.NAME // Users table
         ).from(TASK).leftJoin(USERS).on(TASK.ASSIGNEE_ID.eq(USERS.ID))
             .where(TASK.ID.eq(taskId))
@@ -69,12 +71,24 @@ class SqliteTaskDatasource(private val dsl: DSLContext): TaskDatasource {
     }
 
     override fun assignTask(taskId: String, assignee: User) {
-        val rowsUpdated = dsl.update(TASK)
+        val updatedRow = dsl.update(TASK)
             .set(TASK.ASSIGNEE_ID, assignee.id)
             .where(TASK.ID.eq(taskId))
             .execute()
 
-        if (rowsUpdated == 0) {
+        if (updatedRow == 0) {
+            throw IllegalArgumentException("Task with ID $taskId not found.")
+        }
+    }
+
+    override fun changeTaskState(taskId: String, taskState: TaskState) {
+        println("$taskState, ${taskState.name}, ${TASK.STATE}")
+        val updatedRow = dsl.update(TASK)
+            .set(TASK.STATE, taskState.name)
+            .where(TASK.ID.eq(taskId))
+            .execute()
+
+        if (updatedRow == 0) {
             throw IllegalArgumentException("Task with ID $taskId not found.")
         }
     }

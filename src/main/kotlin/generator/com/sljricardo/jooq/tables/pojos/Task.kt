@@ -15,7 +15,8 @@ data class Task(
     val id: String? = null,
     val name: String? = null,
     val description: String? = null,
-    val assigneeId: String? = null
+    val assigneeId: String? = null,
+    val state: String? = null
 ): Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -50,6 +51,12 @@ data class Task(
         }
         else if (this.assigneeId != o.assigneeId)
             return false
+        if (this.state == null) {
+            if (o.state != null)
+                return false
+        }
+        else if (this.state != o.state)
+            return false
         return true
     }
 
@@ -60,6 +67,7 @@ data class Task(
         result = prime * result + (if (this.name == null) 0 else this.name.hashCode())
         result = prime * result + (if (this.description == null) 0 else this.description.hashCode())
         result = prime * result + (if (this.assigneeId == null) 0 else this.assigneeId.hashCode())
+        result = prime * result + (if (this.state == null) 0 else this.state.hashCode())
         return result
     }
 
@@ -70,6 +78,7 @@ data class Task(
         sb.append(", ").append(name)
         sb.append(", ").append(description)
         sb.append(", ").append(assigneeId)
+        sb.append(", ").append(state)
 
         sb.append(")")
         return sb.toString()

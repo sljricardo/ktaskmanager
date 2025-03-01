@@ -79,6 +79,11 @@ open class Task(
      */
     val ASSIGNEE_ID: TableField<TaskRecord, String?> = createField(DSL.name("ASSIGNEE_ID"), SQLDataType.CLOB, this, "")
 
+    /**
+     * The column <code>TASK.STATE</code>.
+     */
+    val STATE: TableField<TaskRecord, String?> = createField(DSL.name("STATE"), SQLDataType.CLOB.defaultValue(DSL.field(DSL.raw("'TODO'"), SQLDataType.CLOB)), this, "")
+
     private constructor(alias: Name, aliased: Table<TaskRecord>?): this(alias, null, null, aliased, null)
     private constructor(alias: Name, aliased: Table<TaskRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, aliased, parameters)
 

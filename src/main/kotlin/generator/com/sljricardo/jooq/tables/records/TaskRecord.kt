@@ -32,6 +32,10 @@ open class TaskRecord() : UpdatableRecordImpl<TaskRecord>(Task.TASK) {
         set(value): Unit = set(3, value)
         get(): String? = get(3) as String?
 
+    open var state: String?
+        set(value): Unit = set(4, value)
+        get(): String? = get(4) as String?
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -41,11 +45,12 @@ open class TaskRecord() : UpdatableRecordImpl<TaskRecord>(Task.TASK) {
     /**
      * Create a detached, initialised TaskRecord
      */
-    constructor(id: String? = null, name: String? = null, description: String? = null, assigneeId: String? = null): this() {
+    constructor(id: String? = null, name: String? = null, description: String? = null, assigneeId: String? = null, state: String? = null): this() {
         this.id = id
         this.name = name
         this.description = description
         this.assigneeId = assigneeId
+        this.state = state
         resetChangedOnNotNull()
     }
 
@@ -58,6 +63,7 @@ open class TaskRecord() : UpdatableRecordImpl<TaskRecord>(Task.TASK) {
             this.name = value.name
             this.description = value.description
             this.assigneeId = value.assigneeId
+            this.state = value.state
             resetChangedOnNotNull()
         }
     }
