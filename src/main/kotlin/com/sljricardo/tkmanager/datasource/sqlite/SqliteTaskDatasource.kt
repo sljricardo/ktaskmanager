@@ -36,6 +36,7 @@ class SqliteTaskDatasource(private val dsl: DSLContext): TaskDatasource {
             .set(TASK.ID, task.id)
             .set(TASK.NAME, task.name)
             .set(TASK.DESCRIPTION, task.description)
+            .set(TASK.STATE, task.state.name)
             .set(TASK.ASSIGNEE_ID, task.assignee?.id)
             .execute()
 

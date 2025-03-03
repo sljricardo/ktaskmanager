@@ -18,7 +18,8 @@ class SqliteTaskDatasourceTest {
             id = id,
             name = name,
             description = "task-description",
-            assignee = null
+            assignee = null,
+            state = TaskState.TODO
         )
     }
 
@@ -39,6 +40,7 @@ class SqliteTaskDatasourceTest {
                 NAME TEXT NOT NULL,
                 DESCRIPTION TEXT,
                 ASSIGNEE_ID TEXT,
+                STATE TEXT NOT NULL,
                 FOREIGN KEY (ASSIGNEE_ID) REFERENCES USERS(ID) ON DELETE SET NULL
             );
         """.trimIndent())
