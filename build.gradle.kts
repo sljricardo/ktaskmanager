@@ -29,6 +29,10 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
 	implementation("org.springframework.kafka:spring-kafka")
+	implementation("org.springframework.boot:spring-boot-starter-security")
+	implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server") // For JWT authentication
+	implementation("org.springframework.security:spring-security-oauth2-jose") // If using JWT
+
 
 	// Add SQLite JDBC Driver
 	implementation("org.xerial:sqlite-jdbc")
