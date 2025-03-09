@@ -9,7 +9,10 @@ import java.util.UUID
 
 @Service
 class TaskService(
-    val taskDatasource: TaskDatasource, val userService: UserService) {
+    val taskDatasource: TaskDatasource,
+    val userService: UserService,
+    val eventService: EventService
+) {
     fun addTask(task: NewTaskRequest): Task {
         val newTask: Task = Task(
             id = UUID.randomUUID().toString(),
@@ -38,6 +41,15 @@ class TaskService(
         val user = userService.getUser(userId) ?: throw IllegalArgumentException("User with ID $userId does not exist.")
 
         taskDatasource.assignTask(task.id, user)
+
+        eventService.emit(
+            event = mapOf(
+                "event" to "CHANGE_ASSIGNEE",
+                "user" to user,
+                "task" to task
+            ).toString(),
+            userId = user.id,
+        )
     }
 
     fun changeTaskSate(taskId: String, taskState: TaskState) {
