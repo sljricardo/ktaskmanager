@@ -1,29 +1,44 @@
 # Use the official Gradle image to build the project
 FROM gradle:8.5-jdk21 AS build
 
-# Set the working directory
 WORKDIR /app
 
-# Copy the Gradle wrapper and project files
+# Install SQLite in the build container
+RUN apt-get update && apt-get install -y sqlite3
+
 COPY --chown=gradle:gradle . .
 
-# Build the project with the Kotlin Spring Boot plugin
+# SQLite database
+RUN mkdir -p /app && touch /app/mydb.db
+
+# Copy the SQL migration file into the container
+COPY ./src/main/resources/db/migration/V1__migrations.sql /app/V1__migrations.sql
+
+# Run the V1__migrations inside the build container
+RUN sqlite3 /app/mydb.db < /app/V1__migrations.sql
+
+# Run jOOQ code generation
+RUN gradle generateJooq
+
+# Build the project (excluding tests)
 RUN gradle bootJar -x test
 
 # Use a lightweight JDK runtime for the final image
 FROM openjdk:21-jdk-slim
 
+WORKDIR /app
+
 # Set environment variables
 ENV JAVA_OPTS="-Xms256m -Xmx512m"
 
-# Set the working directory
-WORKDIR /app
-
-# Copy the built jar from the build stage
+# Copy the built jar
 COPY --from=build /app/build/libs/*.jar app.jar
 
-# Expose the application port (adjust if needed)
+# Copy the database to persist it in the final container
+COPY --from=build /app/mydb.db /app/mydb.db
+
+# Expose application port
 EXPOSE 8000
 
-# Run the application
+# Run migrations before starting the application
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar"]
