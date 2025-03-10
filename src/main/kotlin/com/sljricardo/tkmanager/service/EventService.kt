@@ -1,7 +1,6 @@
 package com.sljricardo.tkmanager.service
 
 import com.sljricardo.tkmanager.dto.EventResponse
-import com.sljricardo.tkmanager.model.User
 import org.springframework.stereotype.Service
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import java.util.concurrent.ConcurrentHashMap
