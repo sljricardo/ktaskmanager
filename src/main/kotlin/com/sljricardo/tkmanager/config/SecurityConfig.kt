@@ -19,12 +19,10 @@ class SecurityConfig {
         http
             .csrf { it.disable() }
             .authorizeHttpRequests {
-                it
-                    .requestMatchers("/user/all").authenticated() // Protect /users endpoint
+                it.requestMatchers("/user/all").authenticated() // Protect /users
                     .anyRequest().permitAll()
             }
-            .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
-            .httpBasic {} // Enable Basic Authentication
+            .oauth2Login {} // Enables GitHub login
 
         return http.build()
     }
