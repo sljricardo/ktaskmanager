@@ -30,6 +30,9 @@ dependencies {
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
 	implementation("org.springframework.kafka:spring-kafka")
 
+	// Auth
+	implementation("org.springframework.boot:spring-boot-starter-security")
+
 	// Add SQLite JDBC Driver
 	implementation("org.xerial:sqlite-jdbc")
 
